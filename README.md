@@ -6,9 +6,12 @@ This project takes the output of the scnn paper and filters the noise to smooth 
 
 ### Implementation
 
-Convert Labeled data (valid) by running label2image.py
+1. Convert Labeled data (valid) by running label2image.py
+    ```Shell
+    python label2image.py
+    ```
 
-Run PyTorch Code
+2. Run PyTorch Code
 
 
 ____________________________________________________________________________________________________________________
