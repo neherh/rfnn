@@ -5,10 +5,29 @@
 # 
 # This network grabs 2 images of temporal data and improves the 
 # estimate of lane detections
+# input is an image of 
+
+# see https://github.com/pytorch/examples/tree/master/super_resolution
+# https://github.com/pytorch/pytorch/blob/master/torch/nn/modules/pixelshuffle.py
+# http://research.nvidia.com/sites/default/files/pubs/2017-03_Loss-Functions-for/NN_ImgProc.pdf
 
 
 
 '''TO DO
+    - convert text to images
+    - make a dataloader that gets input of 4 images and concatenates them together
+    - creates a dataloader that grabs the label
+    - implement l1 loss. modify a loss function that improves the resolution of the image. basically doing image res? 
+
+
+
+
+
+
+
+
+
+
     - log accuracy, precision, recall(sensitivity), specificity  and whether comparison was malignant or benign and image names for test images: see https://towardsdatascience.com/pytorch-tutorial-distilled-95ce8781a89c
         - user logger and visdom
     - add visualization tools as suggested in by 'distilled' webstite and pytorch in review (pick one):
@@ -187,7 +206,7 @@ class SiameseNetwork(nn.Module):
         super(SiameseNetwork, self).__init__()
         self.cnn1 = nn.Sequential(
             nn.ReflectionPad2d(1),
-            nn.Conv2d(3, 4, kernel_size=3), # 1x100x100 to 4x100x100
+            nn.Conv2d(3, 4, kernel_size=3), # 3x100x100 to 4x100x100
             nn.ReLU(inplace=True),
             nn.BatchNorm2d(4),
             
