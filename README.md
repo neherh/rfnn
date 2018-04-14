@@ -1,3 +1,17 @@
+## ME 640 Project
+
+### Intro
+
+This project takes the output of the scnn paper and filters the noise to smooth the information and provide a better estimate. To do this we use convolutional neural networks and we evaluate the lanes with a previous time step. Method is done in PyTorch.
+
+### Implementation
+
+Convert Labeled data (valid) by running label2image.py
+
+Run PyTorch Code
+
+
+____________________________________________________________________________________________________________________
 ## Spatial CNN for Traffic Lane Detection
 
 ### Paper
