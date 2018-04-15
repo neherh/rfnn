@@ -6,7 +6,7 @@ This project takes the output of the scnn paper and filters the noise to smooth 
 
 ### Implementation
 
-1. Convert Labeled data (valid) by running label2image.py
+1. Preform preprocessing by converting Labeled data (valid) of points to images by running label2image.py. Image size is same size as the raw images.
     ```Shell
     python label2image.py
     ```

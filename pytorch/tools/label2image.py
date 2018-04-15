@@ -12,8 +12,8 @@ import cv2
 # from PIL import Image
 
 # variables
-main_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_valid/'
-new_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_valid_pics/'
+main_dir = '/media/vidavilane/External Drive/dataSets/cuLane_SCNN_Results/label/'
+new_dir = '/media/vidavilane/External Drive/dataSets/cuLane_SCNN_Results/label_pics/'
 
 n = 1640 # x (column)
 m = 590  # y (row)
@@ -100,15 +100,14 @@ for key in list_of_txt:
 	imgPath = imgPath.split('.lines.txt')
 	imgPath = imgPath[0] + '.png'
 	print(imgPath)
-	# val = key.split('/')
-	# print(val[len(val)-3:len(val)])
-	# print(os.sep.join([new_dir, val[len(val)-3], val[len(val)-2], val[len(val)-1]]))
-	cv2.imwrite(imgPath,img)
+
+	# cv2.imwrite(imgPath,img)
 
 
 winname = 'example'
+img2 = cv2.resize(img,(200,200))
 cv2.namedWindow(winname)
-cv2.imshow(winname, img)
+cv2.imshow(winname, img2)
 cv2.waitKey()
 cv2.destroyWindow(winname)
 
