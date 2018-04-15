@@ -108,3 +108,6 @@ class DatasetFromFolder(data.Dataset):
 
     def __len__(self):
         return len(self.image_filenames)
+
+    def get_labelPath(self,index):
+        return self.image_filenames[index].replace(self.image_dir,self.label_dir) + '.png'

@@ -9,6 +9,7 @@
 import os, sys
 import numpy as np
 import cv2
+from time import sleep
 # from PIL import Image
 
 # variables
@@ -60,7 +61,7 @@ for (dirpath, dirnames, filenames) in os.walk(main_dir):
 
 # cycle through text files, get info, and then create a single mono image
 for key in list_of_txt:
-	print(key)
+	# print(key)
 
 
 	# init new image
@@ -89,7 +90,7 @@ for key in list_of_txt:
 
 		# print(x[0])
 		points = np.transpose(np.array([x,y], np.float32))
-		print(points)
+		# print(points)
 		# print(points[:,0])
 		# # print(points)
 		# cv2.circle(image,(int(x[0]),int(y[0])),11,(255),1) 
@@ -99,18 +100,20 @@ for key in list_of_txt:
 	imgPath = key.replace(main_dir,new_dir)
 	imgPath = imgPath.split('.lines.txt')
 	imgPath = imgPath[0] + '.png'
-	print(imgPath)
+	# print(imgPath)
 
-	# cv2.imwrite(imgPath,img)
+	cv2.imwrite(imgPath,img)
+	sleep(.1)
+	idx_txt += 1
 
-
-winname = 'example'
-img2 = cv2.resize(img,(200,200))
-cv2.namedWindow(winname)
-cv2.imshow(winname, img2)
-cv2.waitKey()
-cv2.destroyWindow(winname)
-
+	if (idx_txt % 5) == 0:
+		print(idx_txt)
+		# winname = 'example'
+# img2 = cv2.resize(img,(200,200))
+# cv2.namedWindow(winname)
+# cv2.imshow(winname, img2)
+# cv2.waitKey()
+# cv2.destroyWindow(winname)
 
 
 

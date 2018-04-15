@@ -14,6 +14,10 @@ from model import Net
 from dataset import DatasetFromFolder # home-brew from file dataset.py
 # from data import get_set # home-brew file (data.py)
 
+# for saving images because we need to create directories)
+import os
+import errno 
+
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
 parser.add_argument('--upscale_factor', type=int, required=True, help="super resolution upscale factor")
@@ -40,17 +44,17 @@ print('===> Loading datasets')
 train_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_train/'
 test_dir  = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_test/'
 label_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_valid_pics/'
+preds_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_preds/'
 ratio = 3 # must be int # res*ratio = width. this maintains ratio of height and width
 res = 100
 
 # get train and test set (list of data, length and how to get items)
 train_set = DatasetFromFolder(train_dir, label_dir,
-                             transform=transforms.Compose([transforms.Resize((res*ratio,res)), # no angle changes
+                             transform=transforms.Compose([transforms.Resize((res,res*ratio)), # no angle changes
                                                                       transforms.ToTensor(),
-                                                                      transforms.Normalize(mean=[0.485] , std=[0.229])
                                                                       ]))
 test_set = DatasetFromFolder(test_dir, label_dir,
-                             transform=transforms.Compose([transforms.Resize((res*ratio,res)), # no angle changes
+                             transform=transforms.Compose([transforms.Resize((res,res*ratio)), # no angle changes
                                                                       transforms.ToTensor()
                                                                       ]))
 
@@ -107,7 +111,9 @@ def train(epoch):
 
 
 def test():
-    avg_psnr = 0
+    # local variables
+    name_idx = 0
+
     for batch in testing_data_loader:
         img0,img1, target = Variable(batch[0]), Variable(batch[1]),  Variable(batch[2])
         input = torch.cat([img0,img1],1) # concatenate from (4,1,300,100) to (4,2,300,100) // (batchSize,Depth, Width, Height)
@@ -117,15 +123,19 @@ def test():
             target = target.cuda()
 
         prediction = model(input)
-        torchvision.utils.save_image(prediction.data,'val.png')
-    #     mse = criterion(prediction, target)
-    #     if mse.data[0] != 0:
-    #             psnr = 10 * log10(1 / mse.data[0])
-    #     else:
-    #         print("returning a zero for psnr, error")
-    #         psnr = 0
-    #     avg_psnr += psnr
-    # print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr / len(testing_data_loader)))
+
+        name = test_set.get_labelPath(name_idx)
+        name = name.replace(label_dir,preds_dir)
+
+        if not os.path.exists(os.path.dirname(name)):
+            try:
+                os.makedirs(os.path.dirname(name))
+            except OSError as exc: # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
+        torchvision.utils.save_image(prediction.data,name)
+        name_idx += 1
 
 
 def checkpoint(epoch):
@@ -134,8 +144,20 @@ def checkpoint(epoch):
     print("Checkpoint saved to {}".format(model_out_path))
 
 
+# variables
+counter = 0
+
 # run script
 for epoch in range(1, opt.nEpochs + 1):
+    
+    # train 
     train(epoch)
-    test()
-    # checkpoint(epoch)
+
+    # save model every 5 epochs
+    counter += 1
+    if counter == 5 or epoch == opt.nEpochs:
+        checkpoint(epoch)
+        counter == 0
+
+# at end, run through test code and save the images somewhere
+test()
