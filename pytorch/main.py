@@ -38,13 +38,14 @@ if cuda and not torch.cuda.is_available():
 
 torch.manual_seed(opt.seed)
 if cuda:
+    print('using cuda')
     torch.cuda.manual_seed(opt.seed)
 
 print('===> Loading datasets')
-train_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_train/'
-test_dir  = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_test/'
-label_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_valid_pics/'
-preds_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_preds/'
+train_dir = '/home/neherh/cuLane_SCNN_Results/train/'
+test_dir  = '/home/neherh/cuLane_SCNN_Results/test/'
+label_dir = '/home/neherh/cuLane_SCNN_Results/label_pics/'
+preds_dir = '/home/neherh/cuLane_SCNN_Results/preds/'
 ratio = 3 # must be int # res*ratio = width. this maintains ratio of height and width
 res = 100
 
