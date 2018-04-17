@@ -15,8 +15,11 @@ from time import sleep
 # variables
 # main_dir = '/media/vidavilane/External Drive/dataSets/cuLane_SCNN_Results/label/'
 # new_dir = '/media/vidavilane/External Drive/dataSets/cuLane_SCNN_Results/label_pics/'
-main_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_valid/'
-new_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_valid_pics/'
+
+train_dir = '/home/vidavilane/Documents/datasets/cuLane_SCNN_results/train/'
+test_dir  = '/home/vidavilane/Documents/datasets/cuLane_SCNN_results/test/'
+main_dir = '/home/vidavilane/Documents/datasets/cuLane_SCNN_results/label/'
+new_dir = '/home/vidavilane/Documents/datasets/cuLane_SCNN_results/label_pics2/'
 
 n = 1640 # x (column)
 m = 590  # y (row)
@@ -32,38 +35,52 @@ idx_txt = 0;
 idx_img = 0;
 
 
-# walk through directories, get file info and create directories
-for (dirpath, dirnames, filenames) in os.walk(main_dir):
-	# if there are filenames in this directory
-	if filenames:
-		# print("full")
-		# print(dirpath)
-		# get newPath and create directories
-		newPath = dirpath.replace(main_dir,new_dir)
+# walks through directories and add to filenames
+def get_filenames(main_dir):
+    list_of_img = []
 
-		if not os.path.exists(os.path.dirname(newPath + '/')):
-		    try:
-		        os.makedirs(os.path.dirname(newPath + '/'))
-		    except OSError as exc: # Guard against race condition
-		        if exc.errno != errno.EEXIST:
-		            raise
+    # walk through directories, get file info and create directories
+    for (dirpath, dirnames, filenames) in os.walk(main_dir):
 
-		# create
-		# print(newPath)
-	# else:
-	# 	print("empty")
+        # get image files and add to list
+        for idx,filename in enumerate(filenames):
+            if filename.endswith('.png'):
+            	filename = filename.split('_')
+            	list_of_img.append(os.sep.join([dirpath, filename[0]])) # labels output with .png, other do not
+
+    list_of_img = list(set(list_of_img))
+    list_of_img.sort()
+    return list_of_img
+
+# get file names from test and train
+train_files = get_filenames(train_dir)
+test_files = get_filenames(test_dir)
+
+# concatenate and change to label file path
+train_files = [w.replace(train_dir,main_dir) for w in train_files]
+test_files = [w.replace(test_dir,main_dir) for w in test_files]
+
+label_files = train_files + test_files
+label_files.sort()
 
 
-	# separate files into txt and jpg
-	for filename in filenames:
-		if filename.endswith('.txt'): 
-			list_of_txt[os.sep.join([dirpath, filename])] = os.sep.join([dirpath, filename])
-		if filename.endswith('.jpg'):
-			list_of_img[os.sep.join([dirpath, filename])] = os.sep.join([dirpath, filename])
 
-# cycle through text files, get info, and then create a single mono image
-for key in list_of_txt:
-	# print(key)
+for w in label_files:
+
+	# get the new image file path and get the txt_files
+	txt_file = w + '.lines.txt'
+	img_file = w.replace(main_dir,new_dir) + '.png'
+
+	# create new directory (add any folders if needed)
+	if not os.path.exists(os.path.dirname(img_file)):
+            try:
+                os.makedirs(os.path.dirname(img_file))
+            except OSError as exc: # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
+	# print(txt_file)
+	# print(img_file)
 
 
 	# init new image
@@ -71,7 +88,7 @@ for key in list_of_txt:
 
 	
 	# # open file and get num of lines
-	f = open(list_of_txt[key],'r')
+	f = open(txt_file,'r')
 	f_line = f.readlines()
 
 	list_length = len(f_line)
@@ -90,26 +107,19 @@ for key in list_of_txt:
 		x = list(map(float,x))
 		y = list(map(float,y))
 
-		# print(x[0])
 		points = np.transpose(np.array([x,y], np.float32))
-		# print(points)
-		# print(points[:,0])
-		# # print(points)
-		# cv2.circle(image,(int(x[0]),int(y[0])),11,(255),1) 
-		cv2.polylines(image, np.int32([points]), False, 255,50)
+
+		cv2.polylines(image, np.int32([points]), False, 255,30)
 
 	img = image
-	imgPath = key.replace(main_dir,new_dir)
-	imgPath = imgPath.split('.lines.txt')
-	imgPath = imgPath[0] + '.png'
-	# print(imgPath)
 
-	cv2.imwrite(imgPath,cv2.bitwise_not(img))
+	cv2.imwrite(img_file,cv2.bitwise_not(img))
 	sleep(.1)
-	idx_txt += 1
+	# idx_txt += 1
 
-	if (idx_txt % 5) == 0:
-		print(idx_txt)
+	# if (idx_txt % 5) == 0:
+	# 	print(idx_txt)
+
 		# winname = 'example'
 # img2 = cv2.resize(img,(200,200))
 # cv2.namedWindow(winname)
@@ -119,8 +129,3 @@ for key in list_of_txt:
 
 
 
-
-# determine number of lines
-
-
-# assume all images of 1640 x 590
