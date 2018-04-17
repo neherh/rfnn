@@ -13,8 +13,10 @@ from time import sleep
 # from PIL import Image
 
 # variables
-main_dir = '/media/vidavilane/External Drive/dataSets/cuLane_SCNN_Results/label/'
-new_dir = '/media/vidavilane/External Drive/dataSets/cuLane_SCNN_Results/label_pics/'
+# main_dir = '/media/vidavilane/External Drive/dataSets/cuLane_SCNN_Results/label/'
+# new_dir = '/media/vidavilane/External Drive/dataSets/cuLane_SCNN_Results/label_pics/'
+main_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_valid/'
+new_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_valid_pics/'
 
 n = 1640 # x (column)
 m = 590  # y (row)
@@ -94,7 +96,7 @@ for key in list_of_txt:
 		# print(points[:,0])
 		# # print(points)
 		# cv2.circle(image,(int(x[0]),int(y[0])),11,(255),1) 
-		cv2.polylines(image, np.int32([points]), False, 255,3)
+		cv2.polylines(image, np.int32([points]), False, 255,50)
 
 	img = image
 	imgPath = key.replace(main_dir,new_dir)
@@ -102,7 +104,7 @@ for key in list_of_txt:
 	imgPath = imgPath[0] + '.png'
 	# print(imgPath)
 
-	cv2.imwrite(imgPath,img)
+	cv2.imwrite(imgPath,cv2.bitwise_not(img))
 	sleep(.1)
 	idx_txt += 1
 

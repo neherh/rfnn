@@ -79,6 +79,8 @@ if cuda:
     criterion = criterion.cuda()
 
 optimizer = optim.Adam(model.parameters(), lr=opt.lr)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min',0.1,3) 
+
 
 
 def train(epoch):
@@ -110,6 +112,7 @@ def train(epoch):
 
     print("===> Epoch {} Complete: Avg. Loss: {:.4f}".format(epoch, epoch_loss / len(training_data_loader)))
 
+    scheduler.step(epoch_loss / len(training_data_loader))
 
 def test():
     # local variables
@@ -156,9 +159,10 @@ for epoch in range(1, opt.nEpochs + 1):
 
     # save model every 5 epochs
     counter += 1
+    print(counter)
     if counter == 5 or epoch == opt.nEpochs:
         checkpoint(epoch)
-        counter == 0
+        counter = 0
 
 # at end, run through test code and save the images somewhere
 test()
