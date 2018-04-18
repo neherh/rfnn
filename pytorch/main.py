@@ -44,15 +44,17 @@ if cuda:
 print('===> Loading datasets')
 train_dir = '/home/neherh/cuLane_SCNN_Results/train/'
 test_dir  = '/home/neherh/cuLane_SCNN_Results/test/'
-label_dir = '/home/neherh/cuLane_SCNN_Results/label_pics2/'
-preds_dir = '/home/neherh/cuLane_SCNN_Results/preds2/'
+label_dir = '/home/neherh/cuLane_SCNN_Results/label_pics/'
+preds_dir = '/home/neherh/cuLane_SCNN_Results/preds3/'
 
 #train_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_train/'
 #test_dir  = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_test/'
 #label_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_valid_pics/'
 #preds_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_preds/'
 ratio = 3 # must be int # res*ratio = width. this maintains ratio of height and width
+
 res = 256
+
 
 # get train and test set (list of data, length and how to get items)
 train_set = DatasetFromFolder(train_dir, label_dir,
@@ -71,9 +73,9 @@ testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batc
 print('===> Building model')
 model = Net()#upscale_factor=opt.upscale_factor)
 # criterion = nn.BCELoss()
-# criterion = nn.CrossEntropyLoss()
+criterion = nn.CrossEntropyLoss()
 # criterion = nn.NLLLoss2d(size_average=True)
-criterion = nn.BCEWithLogitsLoss()
+# criterion = nn.BCEWithLogitsLoss()
 # c = nn.LogSoftmax()
 
 # criterion = nn.MSELoss()
@@ -97,8 +99,7 @@ def train(epoch):
         # print(img0.data.type())
         input = torch.cat([img0,img1],1) # concatenate from (4,1,300,100) to (4,2,300,100) // (batchSize,Depth, Width, Height)
         
-        # input = input.type(torch.LongTensor)
-        # target = target.type(torch.LongTensor)
+        
         # print(val.data.size())
         if cuda:
             input = input.cuda()
@@ -106,6 +107,13 @@ def train(epoch):
 
         output = model(input)
         optimizer.zero_grad()
+
+        # output = output.type(torch.LongTensor)
+        target = target.type(torch.LongTensor)
+        # print(target.data[0])
+        target = target.view(-1, res,res*ratio)
+        # print(target.data.size())
+        # print(output.data.size())
         # loss = criterion(c(output), target.view(-1)
         loss = criterion(output, target)
 
@@ -143,7 +151,9 @@ def test():
                 if exc.errno != errno.EEXIST:
                     raise
 
-        torchvision.utils.save_image(prediction.data,name)
+        # print(prediction.data.size())
+        # print(prediction.data[0].size())
+        torchvision.utils.save_image(prediction.data[0],name)
         name_idx += 1
 
 
