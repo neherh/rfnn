@@ -53,7 +53,7 @@ preds_dir = '/home/neherh/cuLane_SCNN_Results/preds3/'
 #preds_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_preds/'
 ratio = 3 # must be int # res*ratio = width. this maintains ratio of height and width
 
-res = 256
+res = 128
 
 
 # get train and test set (list of data, length and how to get items)
@@ -109,7 +109,8 @@ def train(epoch):
         optimizer.zero_grad()
 
         # output = output.type(torch.LongTensor)
-        target = target.type(torch.LongTensor)
+        # target = target.type(torch.LongTensor)
+        target = target.type(torch.cuda.LongTensor)
         # print(target.data[0])
         target = target.view(-1, res,res*ratio)
         # print(target.data.size())
