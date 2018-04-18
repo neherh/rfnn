@@ -1,105 +1,133 @@
 # test.py contains functions that were first tested here
-import os, sys
-from PIL import Image, ImageChops
+# import os, sys
+# from PIL import Image, ImageChops
+
+
+# def get_filenames(main_dir):
+
+# 	#for loop directory
+# 	list_of_img = []
+
+# 	# walk through directories, get file info and create directories
+# 	for (dirpath, dirnames, filenames) in os.walk(main_dir):
+
+# 		# get image files and add to list
+# 		for idx,filename in enumerate(filenames):
+# 			if filename.endswith('.png'):
+# 				filename = filename.split('_')
+# 				# print(filename[0])
+# 				list_of_img.append(os.sep.join([dirpath, filename[0]]))
+
+# 	# make sure no duplicates, sort them and return
+# 	list_of_img = list(set(list_of_img))
+# 	list_of_img.sort()
+# 	return list_of_img
+
+
+# def get_img0(names,index):
+# 	# parse data and get all images
+# 	# print(names[index] + '_1_.png')
+# 	img1 =Image.open(names[index] + '_1_avg.png')
+# 	img2 =Image.open(names[index] + '_2_avg.png')
+# 	img3 =Image.open(names[index] + '_3_avg.png')
+# 	img4 =Image.open(names[index] + '_4_avg.png')
+
+
+# 	img0 = ImageChops.add(img1,img2)
+# 	img0 = ImageChops.add(img0,img4)
+# 	img0 = ImageChops.add(img0,img3)
+
+# 	# img0.show()
+
+# 	return img0
+
+# def get_img1(names,index,size):
+# 	# parse data and get all images
+# 	if index == 0:
+# 		return Image.new('L',size)
+# 	else:
+# 		name = names[index]
+# 		name = name.split('/')
+# 		name = name[len(name)-1]
+
+# 		name0 = names[index-1]
+# 		name0 = name0.split('/')
+# 		name0 = name0[len(name0)-1]
+# 		print(name)
+# 		print(name0)
+
+# 		# create blank image if first in sequence, else get img
+# 		if name <= name0:
+# 			return Image.new('L',size)
+# 		else:
+# 			img1 = get_img0(names,index - 1)
+# 			return img1
+
+
+# def get_imgT(names,index,train_dir,label_dir):
+# 	labelPath = names[index].replace(train_dir,label_dir)
+# 	# print(labelPath)
+# 	target =Image.open(labelPath + '.png')
+
+# 	return target
 
 
 
-def get_filenames(main_dir):
+# # variables
+# index = 1
+# train_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_train/'
+# label_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_valid_pics/'
 
-	#for loop directory
-	list_of_img = []
-
-	# walk through directories, get file info and create directories
-	for (dirpath, dirnames, filenames) in os.walk(main_dir):
-
-		# get image files and add to list
-		for idx,filename in enumerate(filenames):
-			if filename.endswith('.png'):
-				filename = filename.split('_')
-				# print(filename[0])
-				list_of_img.append(os.sep.join([dirpath, filename[0]]))
-
-	# make sure no duplicates, sort them and return
-	list_of_img = list(set(list_of_img))
-	list_of_img.sort()
-	return list_of_img
+# # In init
+# train_names = get_filenames(train_dir)
 
 
-def get_img0(names,index):
-	# parse data and get all images
-	# print(names[index] + '_1_.png')
-	img1 =Image.open(names[index] + '_1_avg.png')
-	img2 =Image.open(names[index] + '_2_avg.png')
-	img3 =Image.open(names[index] + '_3_avg.png')
-	img4 =Image.open(names[index] + '_4_avg.png')
+# # in getItems
+# img0 = get_img0(train_names,index)
+# img1 = get_img1(train_names,index,img0.size)
+
+# # get labeled image target
+# label = get_imgT(train_names,index,train_dir,label_dir) # assume label for every input
+
+# # transform images
 
 
-	img0 = ImageChops.add(img1,img2)
-	img0 = ImageChops.add(img0,img4)
-	img0 = ImageChops.add(img0,img3)
+# img3 = float(img0[:,:]/255)
+# # label.show()
+# # print(img0.size)
+# # print(img1.size)
 
-	# img0.show()
-
-	return img0
-
-def get_img1(names,index,size):
-	# parse data and get all images
-	if index == 0:
-		return Image.new('L',size)
-	else:
-		name = names[index]
-		name = name.split('/')
-		name = name[len(name)-1]
-
-		name0 = names[index-1]
-		name0 = name0.split('/')
-		name0 = name0[len(name0)-1]
-		print(name)
-		print(name0)
-
-		# create blank image if first in sequence, else get img
-		if name <= name0:
-			return Image.new('L',size)
-		else:
-			img1 = get_img0(names,index - 1)
-			return img1
+# # img0.show()
+# # img1.show()
 
 
-def get_imgT(names,index,train_dir,label_dir):
-	labelPath = names[index].replace(train_dir,label_dir)
-	# print(labelPath)
-	target =Image.open(labelPath + '.png')
+# # print(train_names)
 
-	return target
+##################################################################
 
+from __future__ import print_function
+import argparse
+from math import log10
 
+import torchvision
+import torchvision.transforms as transforms
 
-# variables
-index = 1
-train_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_train/'
-label_dir = '/home/vidavilane/Documents/repos/me640/pytorch/small_dataset/small_valid_pics/'
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.autograd import Variable
+from torch.utils.data import DataLoader
+# from model import Net
+# from dataset import DatasetFromFolder # home-brew from file dataset.py
+# from data import get_set # home-brew file (data.py)
 
-# In init
-train_names = get_filenames(train_dir)
+# for saving images because we need to create directories)
+import os
+import errno 
 
+loss = nn.CrossEntropyLoss()
+input = torch.autograd.Variable(torch.randn((3,5)), requires_grad=True)
+target = torch.LongTensor(3).random_(5)
 
-# in getItems
-img0 = get_img0(train_names,index)
-img1 = get_img1(train_names,index,img0.size)
-
-# get labeled image target
-label = get_imgT(train_names,index,train_dir,label_dir) # assume label for every input
-
-# transform images
-
-
-img3 = float(img0[:,:]/255)
-# label.show()
-# print(img0.size)
-# print(img1.size)
-
-# img0.show()
-# img1.show()
-
-
-# print(train_names)
+print(input)
+print(target)

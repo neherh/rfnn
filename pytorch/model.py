@@ -16,8 +16,9 @@ class Net(nn.Module):
         self.conv3_bn = nn.BatchNorm2d(64)
         self.conv4 = nn.Conv2d(64, 32, (3, 3), (1, 1), (1, 1))
         self.conv4_bn = nn.BatchNorm2d(32)
-        self.conv5 = nn.Conv2d(32, 1, (3, 3), (1, 1), (1, 1))
-        self.conv5_bn = nn.BatchNorm2d(1)
+        self.conv5 = nn.Conv2d(32, 2, (3, 3), (1, 1), (1, 1))
+        self.conv5_bn = nn.BatchNorm2d(2)
+        self.softmax = nn.Softmax2d()
         # self.pixel_shuffle = nn.PixelShuffle(upscale_factor)
 
         self._initialize_weights()
@@ -29,6 +30,7 @@ class Net(nn.Module):
         x = self.relu(self.conv3_bn(self.conv3(x)))
         x = self.relu(self.conv4_bn(self.conv4(x)))
         x = self.relu(self.conv5_bn(self.conv5(x)))
+        x = self.softmax(x)
         # x = self.pixel_shuffle(self.conv4(x))
         return x
 
