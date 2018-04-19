@@ -176,7 +176,7 @@ for epoch in range(1, opt.nEpochs + 1):
     # save model every 5 epochs
     counter += 1
     print(counter)
-    if counter == 5 or epoch == opt.nEpochs:
+    if counter == 1 or epoch == opt.nEpochs:
         checkpoint(epoch)
         counter = 0
 
