@@ -73,9 +73,9 @@ testing_data_loader = DataLoader(dataset=test_set, num_workers=opt.threads, batc
 print('===> Building model')
 model = Net()#upscale_factor=opt.upscale_factor)
 # criterion = nn.BCELoss()
-criterion = nn.CrossEntropyLoss()
+# criterion = nn.CrossEntropyLoss()
 # criterion = nn.NLLLoss2d(size_average=True)
-# criterion = nn.BCEWithLogitsLoss()
+criterion = nn.BCEWithLogitsLoss()
 # c = nn.LogSoftmax()
 
 # criterion = nn.MSELoss()
@@ -108,14 +108,9 @@ def train(epoch):
         output = model(input)
         optimizer.zero_grad()
 
-        # output = output.type(torch.LongTensor)
-        # target = target.type(torch.LongTensor)
-        target = target.type(torch.cuda.LongTensor)
-        # print(target.data[0])
-        target = target.view(-1, res,res*ratio)
-        # print(target.data.size())
-        # print(output.data.size())
-        # loss = criterion(c(output), target.view(-1)
+        # target = target.type(torch.cuda.LongTensor)
+        # target = target.view(-1, res,res*ratio)
+
         loss = criterion(output, target)
 
         epoch_loss += loss.data[0]
@@ -154,7 +149,7 @@ def test():
 
         # print(prediction.data.size())
         # print(prediction.data[0].size())
-        torchvision.utils.save_image(prediction.data[0],name)
+        torchvision.utils.save_image(prediction.data,name)
         name_idx += 1
 
 

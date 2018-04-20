@@ -17,8 +17,8 @@ class Net(nn.Module):
         self.conv3_bn = nn.BatchNorm2d(64)
         self.conv4 = nn.Conv2d(64, 32, (3, 3), (1, 1), (1, 1),bias = False)
         self.conv4_bn = nn.BatchNorm2d(32)
-        self.conv5 = nn.Conv2d(32, 2, (3, 3), (1, 1), (1, 1),bias = False)
-        self.conv5_bn = nn.BatchNorm2d(2)
+        self.conv5 = nn.Conv2d(32, 1, (3, 3), (1, 1), (1, 1),bias = False)
+        self.conv5_bn = nn.BatchNorm2d(1)
         # self.softmax = nn.Softmax2d()
         # self.pixel_shuffle = nn.PixelShuffle(upscale_factor)
 
