@@ -85,7 +85,7 @@ if cuda:
     model = model.cuda()
     criterion = criterion.cuda()
 
-optimizer = optim.SGD(model.parameters(), lr=opt.lr)
+optimizer = optim.SGD(model.parameters(), lr=opt.lr, momentum = 0.9, weight_decay = 1e-3)
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min',0.1,3) 
 
 

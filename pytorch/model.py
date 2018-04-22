@@ -30,7 +30,8 @@ class Net(nn.Module):
         x = self.relu(self.conv2_bn(self.conv2(x)))
         x = self.relu(self.conv3_bn(self.conv3(x)))
         x = self.relu(self.conv4_bn(self.conv4(x)))
-        x = self.sig(self.conv5(x))
+        x = self.relu(self.conv5(x))
+        x = self.conv5_bn(x)
         # x = self.softmax(x)
         # x = self.pixel_shuffle(self.conv4(x))
         return x
